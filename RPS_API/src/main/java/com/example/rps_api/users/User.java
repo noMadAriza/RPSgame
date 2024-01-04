@@ -3,8 +3,6 @@ package com.example.rps_api.users;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.beans.ConstructorProperties;
-
 public class User {
     @JsonProperty("user_id")
     private String user_id;
