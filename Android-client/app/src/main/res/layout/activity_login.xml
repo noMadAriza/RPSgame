@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".login.LoginActivity"
+    android:background="@drawable/background">
+
+    <TextView
+        android:id="@+id/myTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FFE2E2"
+        android:text="RockPaperScissors"
+        android:textSize="30sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        android:gravity="center"
+        app:layout_constraintVertical_bias="0.017" />
+
+    <EditText
+        android:id="@+id/passwordContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="password"
+        android:inputType="textPassword"
+        android:textSize="26sp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@id/EmailTxt"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/EmailTxt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:textSize="26sp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@id/myTxt"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".9" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        app:layout_constraintTop_toBottomOf="@id/passwordContainer"
+        android:paddingTop="20sp"
+        android:paddingBottom="20sp"
+        android:gravity="center"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/loginBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="#BA8C63"
+            android:text="log in"
+            android:textSize="16sp"
+            android:backgroundTint="@color/black"
+            android:layout_weight="0.4"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toEndOf="@+id/loginBtn"
+            android:layout_weight="0.2"
+            android:visibility="invisible"/>
+        <Button
+            android:id="@+id/registerBtnPage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="#BA8C63"
+            android:onClick="registerBtnClick"
+            android:text="Register"
+            android:textSize="16sp"
+            android:backgroundTint="@color/black"
+            android:layout_weight="0.4"/>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

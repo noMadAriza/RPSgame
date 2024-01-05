@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".main.MainActivity"
+    android:background="@drawable/background">
+
+    <Button
+        android:id="@+id/leaderboardsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="leaderboards"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineV2"
+        app:layout_constraintStart_toEndOf="@id/addLobbyBtn"
+        app:layout_constraintTop_toTopOf="@id/guidelineH1" />
+
+    <Button
+        android:id="@+id/addLobbyBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:text="new lobby"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/leaderboardsBtn"
+        app:layout_constraintStart_toEndOf="@id/guidelineV1"
+        app:layout_constraintTop_toTopOf="@id/guidelineH1" />
+
+    <TextView
+        android:id="@+id/searchingPlayersTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="looking for players"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/leaderboardsBtn"
+        app:layout_constraintEnd_toEndOf="@id/guidelineV2"
+        app:layout_constraintStart_toStartOf="@id/guidelineV1"
+        app:layout_constraintTop_toTopOf="@id/guidelineTopOfMenu" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineV2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineH1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTopOfMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".85" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineH2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".15" />
+    <Button
+        android:id="@+id/refreshBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/guidelineH2"
+        app:layout_constraintEnd_toEndOf="@id/guidelineV2"
+        android:backgroundTint="#3b5998"
+        android:text="refresh"
+        android:textSize="12sp"/>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineTopOfMenu"
+        app:layout_constraintTop_toBottomOf="@id/guidelineH2">
+
+        <LinearLayout
+            android:id="@+id/serverList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="10dp"></LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
