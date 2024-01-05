@@ -10,9 +10,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.example.firebaselogin.utilities.DataBaseCommunication;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONException;
+
+import java.security.spec.ECField;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -58,20 +62,28 @@ public class RegisterController {
     /* creates the account and returns a future */
     public CompletableFuture<String> createAccount(String username, String email, String password) throws InterruptedException {
         CompletableFuture<String> future = new CompletableFuture<>();
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    createUser(user.getUid(), username, email);
-                    future.complete("user has been created!");
-                } else {
-                    // If registration fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                    if (task.getException() instanceof FirebaseAuthUserCollisionException)
-                        future.completeExceptionally(new Exception("Email is already being used!"));
-                    else
-                        future.completeExceptionally(new Exception("couldn't complete the registration"));
-                }
-            });
+        DataBaseCommunication.getUserWithUserName(dataBaseCommunication.getQueue(), username).thenAccept(res -> {
+            if(res.length() > 0)
+                future.completeExceptionally(new Exception("username already used"));
+            if (!future.isDone()) {
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        createUser(user.getUid(), username, email);
+                        future.complete("user has been created!");
+                    } else {
+                        // If registration fails, display a message to the user.
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        if (task.getException() instanceof FirebaseAuthUserCollisionException)
+                            future.completeExceptionally(new Exception("Email is already being used!"));
+                        else if(task.getException() instanceof FirebaseAuthInvalidCredentialsException)
+                            future.completeExceptionally(new Exception("The email address is badly formatted"));
+                        else
+                            future.completeExceptionally(new Exception("couldn't complete the registration"));
+                    }
+                });
+            }
+        });
         return future;
     }
 

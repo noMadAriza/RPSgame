@@ -3,6 +3,7 @@ package com.example.firebaselogin.utilities;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -10,6 +11,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.CompletableFuture;
@@ -51,6 +53,8 @@ public class DataBaseCommunication {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("Error.Response", error.toString());
+                        if(error instanceof ParseError)
+                            future.complete(new JSONObject());
                         future.completeExceptionally(new Throwable("couldn't retrieve information"));
                     }
                 }
