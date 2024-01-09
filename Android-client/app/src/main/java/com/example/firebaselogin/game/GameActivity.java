@@ -54,12 +54,27 @@ public class GameActivity extends AppCompatActivity {
     Drawable darkquestion_red;
     Drawable lightquestion_blue;
     Drawable darkquestion_blue;
+    // highlight drawables
+    Drawable highlightEmptySquare;
+    Drawable highLight_rock_red;
+    Drawable highLight_rock_blue;
+    Drawable highLight_scissors_red;
+    Drawable highLight_scissors_blue;
+    Drawable highLight_paper_red;
+    Drawable highLight_paper_blue;
+    Drawable highLight_hole;
+    Drawable highLight_flag_red;
+    Drawable highLight_flag_blue;
+    Drawable highLight_question_red;
+    Drawable highLight_question_blue;
+
     ImageView rockMenuChoose;
     ImageView paperMenuChoose;
     ImageView scissorsMenuChoose;
     LinearLayout warMenu;
     TableLayout board;
     TextView textPrompt;
+    TextView turnPrompt;
     Button leftArrow;
     Button rightArrow;
     Button upArrow;
@@ -98,10 +113,25 @@ public class GameActivity extends AppCompatActivity {
         lightSquare = getDrawable(R.drawable.lightsquare);
         lightTrap = getDrawable(R.drawable.hole_light);
         darkTrap = getDrawable(R.drawable.hole_dark);
+        // highlight drawables
+        highlightEmptySquare = getDrawable(R.drawable.highlight_empty_square);
+        highLight_flag_blue = getDrawable(R.drawable.highlight_blue_flag);
+        highLight_flag_red = getDrawable(R.drawable.highlight_red_flag);
+        highLight_question_red = getDrawable(R.drawable.highlight_red_question);
+        highLight_question_blue = getDrawable(R.drawable.highlight_blue_question);
+        highLight_paper_blue = getDrawable(R.drawable.highlight_blue_paper);
+        highLight_paper_red = getDrawable(R.drawable.highlight_red_paper);
+        highLight_rock_blue = getDrawable(R.drawable.highlight_blue_paper);
+        highLight_rock_red = getDrawable(R.drawable.highlight_red_paper);
+        highLight_scissors_blue = getDrawable(R.drawable.highlight_blue_scissors);
+        highLight_scissors_red = getDrawable(R.drawable.highlight_red_scissors);
+        highLight_hole = getDrawable(R.drawable.hole_highlight);
+
         rockMenuChoose = findViewById(R.id.rockMenuChoose);
         paperMenuChoose = findViewById(R.id.paperMenuChoose);
         scissorsMenuChoose = findViewById(R.id.scissorsMenuChoose);
         textPrompt = findViewById(R.id.textPrompt);
+        turnPrompt = findViewById(R.id.turnPrompt);
         leftArrow = findViewById(R.id.left_arrow_button);
         rightArrow = findViewById(R.id.right_arrow_button);
         upArrow = findViewById(R.id.up_arrow_button);
@@ -198,7 +228,7 @@ public class GameActivity extends AppCompatActivity {
                     if(cnt == 0) {
                         runOnUiThread(() -> {
                             new NonMoveablePlayer(myGame, Player.Players.FLAG, myGame.getColor(), p[0],p[1]);
-                            setImage(myGame.getCellsImage()[p[0]][p[1]], Player.Players.FLAG,myGame.getColor(),isLight(p[0],p[1]));
+                            setImage(myGame.getCellsImage()[p[0]][p[1]], Player.Players.FLAG,myGame.getColor(),isLight(p[0],p[1]),false);
                             myGame.getCellsImage()[p[0]][p[1]].setOnClickListener(null);
                             textPrompt.setText("choose where to place your trap ");
                         });
@@ -208,7 +238,7 @@ public class GameActivity extends AppCompatActivity {
                     else{
                         new NonMoveablePlayer(myGame, Player.Players.TRAP, myGame.getColor(), p[0],p[1]);
                         runOnUiThread(() -> {
-                            setImage(myGame.getCellsImage()[p[0]][p[1]], Player.Players.TRAP,myGame.getColor(),isLight(p[0],p[1]));
+                            setImage(myGame.getCellsImage()[p[0]][p[1]], Player.Players.TRAP,myGame.getColor(),isLight(p[0],p[1]),false);
                             removeClickable(cellsImage); //no more clickable squares for putting starting objects
                             textPrompt.setVisibility(View.INVISIBLE);
                         });
@@ -240,7 +270,7 @@ public class GameActivity extends AppCompatActivity {
                     Player.Players playerType = Player.Players.values()[rand + 1];
                     if(gamePlayers[row][column] == null){ //if the placement is not used for any other player
                         MoveablePlayer player = new MoveablePlayer(myGame,playerType, myGame.getColor(),row,column);
-                        setImage(myGame.getCellsImage()[row][column],playerType,myGame.getColor(),isLight(row,column));
+                        setImage(myGame.getCellsImage()[row][column],playerType,myGame.getColor(),isLight(row,column),false);
                         myGame.makeClickable(player);
                         playersCnt[rand]--;
                         playersPlaced++;
@@ -279,48 +309,60 @@ public class GameActivity extends AppCompatActivity {
                     type = players[row][column].getType();
                     color = players[row][column].getMycolor();
                 }
-                setImage(imageCells[row][column], type, color ,light);
+                setImage(imageCells[row][column], type, color ,light,false);
             }
         }
     }   //can be considered to change UI of only enemy for less complexity time
 
     // gets image and player data and attaches the right Drawable to it
-    private void setImage(ImageView image, Player.Players type, GameLogic.Color color, Boolean light) {
+    private void setImage(ImageView image, Player.Players type, GameLogic.Color color, Boolean light,boolean highLight) {
         runOnUiThread(() -> {
             if (color == GameLogic.Color.RED) {
                 switch (type) {
                     case ROCK:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_rock_red);
+                        else if (light)
                             image.setImageDrawable(lightRock_red);
                         else
                             image.setImageDrawable(darkRock_red);
                         break;
                     case PAPER:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_paper_red);
+                        else if (light)
                             image.setImageDrawable(lightPaper_red);
                         else
                             image.setImageDrawable(darkPaper_red);
                         break;
                     case SCISSORS:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_scissors_red);
+                        else if (light)
                             image.setImageDrawable(lightScissors_red);
                         else
                             image.setImageDrawable(darkScissors_red);
                         break;
                     case FLAG:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_flag_red);
+                        else if (light)
                             image.setImageDrawable(lightFlag_red);
                         else
                             image.setImageDrawable(darkFlag_red);
                         break;
                     case TRAP:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_hole);
+                        else if (light)
                             image.setImageDrawable(lightTrap);
                         else
                             image.setImageDrawable(darkTrap);
                         break;
                     case UNKNOWN:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_question_red);
+                        else if (light)
                             image.setImageDrawable(lightquestion_red);
                         else
                             image.setImageDrawable(darkquestion_red);
@@ -330,44 +372,58 @@ public class GameActivity extends AppCompatActivity {
             else if (color == GameLogic.Color.BLUE) {
                 switch (type) {
                     case ROCK:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_rock_blue);
+                        else if (light)
                             image.setImageDrawable(lightRock_blue);
                         else
                             image.setImageDrawable(darkRock_blue);
                         break;
                     case PAPER:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_paper_blue);
+                        else if (light)
                             image.setImageDrawable(lightPaper_blue);
                         else
                             image.setImageDrawable(darkPaper_blue);
                         break;
                     case SCISSORS:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_scissors_blue);
+                        else if (light)
                             image.setImageDrawable(lightScissors_blue);
                         else
                             image.setImageDrawable(darkScissors_blue);
                         break;
                     case FLAG:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_flag_blue);
+                        else if (light)
                             image.setImageDrawable(lightFlag_blue);
                         else
                             image.setImageDrawable(darkFlag_blue);
                         break;
                     case TRAP:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_hole);
+                        else if (light)
                             image.setImageDrawable(lightTrap);
                         else
                             image.setImageDrawable(darkTrap);
                         break;
                     case UNKNOWN:
-                        if (light)
+                        if(highLight)
+                            image.setImageDrawable(highLight_question_blue);
+                        else if (light)
                             image.setImageDrawable(lightquestion_blue);
                         else
                             image.setImageDrawable(darkquestion_blue);
                         break;
                 }
             } else {   //it is an empty cell
-                if (light)
+                if(highLight)
+                    image.setImageDrawable(highlightEmptySquare);
+                else if (light)
                     image.setImageDrawable(lightSquare);
                 else
                     image.setImageDrawable(darkSquare);
@@ -443,7 +499,7 @@ public class GameActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         }catch(Exception e){ e.printStackTrace(); }
         this.startActivity(intent);
     }
@@ -462,5 +518,25 @@ public class GameActivity extends AppCompatActivity {
                 }).create().show();
     }
 
+    /* highlights the cell in order to make the player understand possible moves if boolean true, if false the other way around */
+    public void highlight(ImageView cell, int row, int column, Player player, boolean bool){
+        if(player == null || player.getType() == Player.Players.EMPTY_CELL){ // cell is empty
+            setImage(cell, Player.Players.EMPTY_CELL,null,isLight(row,column),bool);
+        }
+        else{
+            if(player.getMycolor() != myGame.getColor())
+                setImage(cell,player.getType(),player.getMycolor(),isLight(row,column),bool);
+        }
 
+    }
+
+    //shows it's player's turn on the screen
+    public void showTurn(boolean turn) {
+        runOnUiThread(() -> {
+            if(turn)
+                turnPrompt.setVisibility(View.VISIBLE);
+            else
+                turnPrompt.setVisibility(View.INVISIBLE);
+        });
+    }
 }

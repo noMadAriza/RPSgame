@@ -88,6 +88,7 @@ public class GameLogic {
 
     public void setMyTurn(Boolean myTurn) {
         this.myTurn = myTurn;
+        activity.showTurn(myTurn);
     }
 
     public static int[] findObjectPlace(TableLayout board, ImageView image){
@@ -102,7 +103,28 @@ public class GameLogic {
 
     // replace the last clicked player with the player given
     public void setLastClicked(MoveablePlayer player){
+        if(this.lastClick != null){ //there was a clicked player before -- delete his highlight
+            if(insideGameBoard(lastClick.row,lastClick.column - 1))
+                activity.highlight(cellsImage[lastClick.row][lastClick.column - 1],lastClick.row,lastClick.column - 1,gamePlayers[lastClick.row][lastClick.column - 1],false);
+            if(insideGameBoard(lastClick.row,lastClick.column + 1))
+                activity.highlight(cellsImage[lastClick.row][lastClick.column + 1],lastClick.row,lastClick.column + 1,gamePlayers[lastClick.row][lastClick.column + 1],false);
+            if(insideGameBoard(lastClick.row - 1,lastClick.column))
+                activity.highlight(cellsImage[lastClick.row - 1][lastClick.column],lastClick.row - 1,lastClick.column,gamePlayers[lastClick.row - 1][lastClick.column],false);
+            if(insideGameBoard(lastClick.row + 1,lastClick.column))
+                activity.highlight(cellsImage[lastClick.row + 1][lastClick.column],lastClick.row + 1,lastClick.column,gamePlayers[lastClick.row + 1][lastClick.column],false);
+        }
         this.lastClick = player;
+        if(player != null) { //player pressed is not null
+            if (insideGameBoard(player.row, player.column - 1))
+                activity.highlight(cellsImage[player.row][player.column - 1], player.row, player.column - 1, gamePlayers[player.row][player.column - 1], true);
+            if (insideGameBoard(player.row, player.column + 1))
+                activity.highlight(cellsImage[player.row][player.column + 1], player.row, player.column + 1, gamePlayers[player.row][player.column + 1], true);
+            if (insideGameBoard(player.row - 1, player.column))
+                activity.highlight(cellsImage[player.row - 1][player.column], player.row - 1, player.column, gamePlayers[player.row - 1][player.column], true);
+            if (insideGameBoard(player.row + 1, player.column))
+                activity.highlight(cellsImage[player.row + 1][player.column], player.row + 1, player.column, gamePlayers[player.row + 1][player.column], true);
+        }
+
     }
 
     // gets data from server and updates the data in the local device
@@ -398,5 +420,19 @@ public class GameLogic {
         new Thread(() -> {
             communication.sendMenuChoose(type);
         }).start();
+    }
+
+    // returns true for inside the board squares
+    private boolean insideGameBoard(int row,int column){
+        if(row >= 0 && column >= 0 && row < GameConstants.BOARD_SIZE && column < GameConstants.BOARD_SIZE)
+            return true;
+        return false;
+    }
+
+    // returns true for Empty squares
+    private boolean isEmptySquare(int row,int column){
+        if(insideGameBoard(row,column) && (gamePlayers[row][column] == null || gamePlayers[row][column].getType() == Player.Players.EMPTY_CELL))
+            return true;
+        return false;
     }
 }
