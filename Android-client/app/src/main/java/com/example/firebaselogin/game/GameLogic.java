@@ -104,27 +104,57 @@ public class GameLogic {
     // replace the last clicked player with the player given
     public void setLastClicked(MoveablePlayer player){
         if(this.lastClick != null){ //there was a clicked player before -- delete his highlight
-            if(insideGameBoard(lastClick.row,lastClick.column - 1))
-                activity.highlight(cellsImage[lastClick.row][lastClick.column - 1],lastClick.row,lastClick.column - 1,gamePlayers[lastClick.row][lastClick.column - 1],false);
-            if(insideGameBoard(lastClick.row,lastClick.column + 1))
+            if(highlight(lastClick.row, lastClick.column - 1)) {
+                activity.highlight(cellsImage[lastClick.row][lastClick.column - 1], lastClick.row, lastClick.column - 1, gamePlayers[lastClick.row][lastClick.column - 1], false);
+                cellsImage[lastClick.row][lastClick.column - 1].setOnClickListener(null);
+            }
+            if(highlight(lastClick.row, lastClick.column + 1)){
                 activity.highlight(cellsImage[lastClick.row][lastClick.column + 1],lastClick.row,lastClick.column + 1,gamePlayers[lastClick.row][lastClick.column + 1],false);
-            if(insideGameBoard(lastClick.row - 1,lastClick.column))
-                activity.highlight(cellsImage[lastClick.row - 1][lastClick.column],lastClick.row - 1,lastClick.column,gamePlayers[lastClick.row - 1][lastClick.column],false);
-            if(insideGameBoard(lastClick.row + 1,lastClick.column))
-                activity.highlight(cellsImage[lastClick.row + 1][lastClick.column],lastClick.row + 1,lastClick.column,gamePlayers[lastClick.row + 1][lastClick.column],false);
+                cellsImage[lastClick.row][lastClick.column + 1].setOnClickListener(null);
+            }
+            if(highlight(lastClick.row - 1, lastClick.column)) {
+                activity.highlight(cellsImage[lastClick.row - 1][lastClick.column], lastClick.row - 1, lastClick.column, gamePlayers[lastClick.row - 1][lastClick.column], false);
+                cellsImage[lastClick.row - 1][lastClick.column].setOnClickListener(null);
+            }
+            if(highlight(lastClick.row + 1, lastClick.column)) {
+                activity.highlight(cellsImage[lastClick.row + 1][lastClick.column], lastClick.row + 1, lastClick.column, gamePlayers[lastClick.row + 1][lastClick.column], false);
+                cellsImage[lastClick.row + 1][lastClick.column].setOnClickListener(null);
+            }
         }
         this.lastClick = player;
-        if(player != null) { //player pressed is not null
-            if (insideGameBoard(player.row, player.column - 1))
+        if(player != null) {//player pressed is not null
+            if (highlight(lastClick.row, lastClick.column - 1)) {
                 activity.highlight(cellsImage[player.row][player.column - 1], player.row, player.column - 1, gamePlayers[player.row][player.column - 1], true);
-            if (insideGameBoard(player.row, player.column + 1))
+                cellsImage[player.row][player.column - 1].setOnClickListener((view) -> {
+                    move(player,MoveablePlayer.Direction.LEFT);
+                });
+            }
+            if (highlight(lastClick.row, lastClick.column + 1)) {
                 activity.highlight(cellsImage[player.row][player.column + 1], player.row, player.column + 1, gamePlayers[player.row][player.column + 1], true);
-            if (insideGameBoard(player.row - 1, player.column))
+                cellsImage[player.row][player.column + 1].setOnClickListener((view) -> {
+                    move(player,MoveablePlayer.Direction.RIGHT);
+                });
+            }
+            if (highlight(lastClick.row - 1, lastClick.column)) {
                 activity.highlight(cellsImage[player.row - 1][player.column], player.row - 1, player.column, gamePlayers[player.row - 1][player.column], true);
-            if (insideGameBoard(player.row + 1, player.column))
+                cellsImage[player.row - 1][player.column].setOnClickListener((view) -> {
+                    move(player,MoveablePlayer.Direction.FORWARD);
+                });
+            }
+            if (highlight(lastClick.row + 1, lastClick.column)) {
                 activity.highlight(cellsImage[player.row + 1][player.column], player.row + 1, player.column, gamePlayers[player.row + 1][player.column], true);
+                cellsImage[player.row + 1][player.column].setOnClickListener((view) -> {
+                    move(player,MoveablePlayer.Direction.BACKWARD);
+                });
+            }
         }
 
+    }
+    // returns true if the cell should be highlighted
+    private boolean highlight(int row,int column){
+        if(!insideGameBoard(row,column) || (gamePlayers[row][column] != null && gamePlayers[row][column].getMycolor() == color))
+            return false;
+        return true;
     }
 
     // gets data from server and updates the data in the local device
@@ -234,21 +264,44 @@ public class GameLogic {
     }
 
     // if player can move, will move it, else will not and returns the abiility to move for that direction
-    public Boolean move(MoveablePlayer.Direction direction) throws JSONException {
-        MoveablePlayer player = lastClick;
-        Boolean resposne = false;
-        if(player != null && getMyTurn()) { //if a player has been clicked and its my turn
-            int oldRow = player.row;
-            int oldColumn = player.column;
-            resposne = checkMove(player,direction);
-            if (resposne) { // the turn has been used
-                makeClickable(player);
-                cellsImage[oldRow][oldColumn].setOnClickListener(null);
-                communication.updateServer(gamePlayers, lobbyID);
+    public void move(MoveablePlayer player,MoveablePlayer.Direction direction){
+        new Thread(() -> {
+            setLastClicked(null);
+            if(!getMyTurn())
+                return ;
+            int newColumn = player.column;
+            int newRow = player.row;
+            switch (direction) {
+                case LEFT:
+                    newColumn--;
+                    break;
+                case RIGHT:
+                    newColumn++;
+                    break;
+                case FORWARD:
+                    newRow--;
+                    break;
+                case BACKWARD:
+                    newRow++;
+                    break;
             }
-        }
-        setLastClicked(null);
-        return resposne;
+            try {
+                //the square moving into has a player
+                Player winner = player;
+                if(gamePlayers[newRow][newColumn] != null) {
+                    winner = war(player, gamePlayers[newRow][newColumn]);
+                    System.out.println("the war was a success to: " + winner.getMycolor());
+                }
+                if(winner == player)
+                    player.move(gamePlayers,cellsImage,direction);
+                communication.updateServer(gamePlayers,lobbyID);
+                activity.updateUI(gamePlayers);
+                makeClickable(player);
+                return ;
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     /* checks the move: if the square is empty, will move and returns true.

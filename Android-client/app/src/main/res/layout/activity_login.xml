@@ -12,14 +12,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#FFE2E2"
+        android:gravity="center"
         android:text="RockPaperScissors"
-        android:textSize="30sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#000000"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="@id/guidelineRight"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        android:gravity="center"
-        app:layout_constraintVertical_bias="0.017" />
+        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
     <EditText
         android:id="@+id/passwordContainer"
@@ -30,6 +30,7 @@
         android:textSize="26sp"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="@id/guidelineRight"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@id/EmailTxt"
@@ -41,9 +42,10 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:textSize="26sp"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
+        android:textColor="#000000"
+        android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="@id/guidelineRight"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@id/myTxt"

@@ -18,6 +18,7 @@ public abstract class Player {
     protected int column;
     protected GameLogic.Color mycolor;
     protected  Boolean visible = false;
+
     public Player(Players type, GameLogic.Color color, GameLogic myGame , int row, int column){
         this.type = type;
         myGame.getGamePlayers()[row][column] = this;

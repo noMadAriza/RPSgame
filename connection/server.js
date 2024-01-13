@@ -159,10 +159,9 @@ io.on("connection", (socket) => {
   //the game in lobbyID ends and gets color of the winner
   socket.on("endGame", async(lobbyID,color) => {
     console.log("sends finish");
-    await sleep(1000);
+    await sleep(500);
     await mapMutex.acquire();
-    if(io.sockets.adapter.rooms[lobbyID].bluePlayer != null) // there are 2 players in lobby
-      io.to(lobbyID).emit("winner",color);
+    io.to(lobbyID).emit("winner",color);
     mapMutex.release();
     closeLobby(socket,lobbyID);
   });

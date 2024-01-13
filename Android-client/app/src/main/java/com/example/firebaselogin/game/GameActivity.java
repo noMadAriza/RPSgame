@@ -121,8 +121,8 @@ public class GameActivity extends AppCompatActivity {
         highLight_question_blue = getDrawable(R.drawable.highlight_blue_question);
         highLight_paper_blue = getDrawable(R.drawable.highlight_blue_paper);
         highLight_paper_red = getDrawable(R.drawable.highlight_red_paper);
-        highLight_rock_blue = getDrawable(R.drawable.highlight_blue_paper);
-        highLight_rock_red = getDrawable(R.drawable.highlight_red_paper);
+        highLight_rock_blue = getDrawable(R.drawable.highlight_blue_rock);
+        highLight_rock_red = getDrawable(R.drawable.highlight_red_rock);
         highLight_scissors_blue = getDrawable(R.drawable.highlight_blue_scissors);
         highLight_scissors_red = getDrawable(R.drawable.highlight_red_scissors);
         highLight_hole = getDrawable(R.drawable.hole_highlight);
@@ -148,32 +148,6 @@ public class GameActivity extends AppCompatActivity {
         WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getMetrics(displayMetrics);
         screenHeight = displayMetrics.widthPixels;
-
-        /* movement */
-        rightArrow.setOnClickListener(view -> {
-            move(MoveablePlayer.Direction.RIGHT);
-        });
-        leftArrow.setOnClickListener(view -> {
-            move(MoveablePlayer.Direction.LEFT);
-        });
-        upArrow.setOnClickListener(view -> {
-            move(MoveablePlayer.Direction.FORWARD);
-        });
-        downArrow.setOnClickListener(view -> {
-            move(MoveablePlayer.Direction.BACKWARD);
-        });
-    }
-    /* move the last clicked MoveablePlayer to a direction given if possible*/
-    private void move(MoveablePlayer.Direction direction) {
-        Thread thread = new Thread(() -> {
-            try {
-                if (myGame.move(direction))
-                    updateUI(myGame.getGamePlayers());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        thread.start();
     }
 
     /* builds the initial game UI */
