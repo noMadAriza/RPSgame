@@ -128,7 +128,7 @@ public class GameCommunication {
 
     //sends type to the server after clicking on war menu
     public void sendMenuChoose(Player.Players type){
-        socket.emit("clickedOnMenu",gameLogic.getColor().name(),type.ordinal());
+        socket.emit("clickedOnMenu", gameLogic.getLobbyID(),gameLogic.getColor().name(),type.ordinal());
     }
 
     /* gets boolean winner and realGame

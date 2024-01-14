@@ -75,59 +75,9 @@
         android:gravity="left"
         android:text="your turn!"
         android:textSize="24sp"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@id/guidelineBottom" />
-
-        <FrameLayout
-            android:id="@+id/centerArrows"
-            android:layout_height="20dp"
-            android:layout_width="20dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-            app:layout_constraintEnd_toEndOf="@id/guidelineRight"
-            app:layout_constraintTop_toTopOf="@id/guidelineBottom"/>
-    <Button
-        android:id="@+id/left_arrow_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/left_arrow_button"
-        app:layout_constraintEnd_toStartOf="@id/centerArrows"
-        app:layout_constraintBottom_toBottomOf="@id/centerArrows"
-        app:layout_constraintTop_toTopOf="@id/centerArrows"
-        android:clickable="false"
-        android:visibility="invisible"/>
-
-    <Button
-        android:id="@+id/right_arrow_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/right_arrow_button"
-        app:layout_constraintStart_toEndOf="@id/centerArrows"
-        app:layout_constraintBottom_toBottomOf="@id/centerArrows"
-        app:layout_constraintTop_toTopOf="@id/centerArrows"
-        android:clickable="false"
-        android:visibility="invisible"/>
-    <Button
-        android:id="@+id/up_arrow_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/up_arrow_button"
-        app:layout_constraintStart_toStartOf="@id/centerArrows"
-        app:layout_constraintBottom_toTopOf="@id/centerArrows"
-        app:layout_constraintEnd_toEndOf="@id/centerArrows"
-        android:clickable="false"
-        android:visibility="invisible"/>
-    <Button
-        android:id="@+id/down_arrow_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/down_arrow_button"
-        app:layout_constraintStart_toStartOf="@id/centerArrows"
-        app:layout_constraintTop_toBottomOf="@id/centerArrows"
-        app:layout_constraintEnd_toEndOf="@id/centerArrows"
-        android:clickable="false"
-        android:visibility="invisible"/>
 
     <LinearLayout
         android:id="@+id/warMenu"

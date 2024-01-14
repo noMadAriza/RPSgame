@@ -75,10 +75,6 @@ public class GameActivity extends AppCompatActivity {
     TableLayout board;
     TextView textPrompt;
     TextView turnPrompt;
-    Button leftArrow;
-    Button rightArrow;
-    Button upArrow;
-    Button downArrow;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -132,10 +128,6 @@ public class GameActivity extends AppCompatActivity {
         scissorsMenuChoose = findViewById(R.id.scissorsMenuChoose);
         textPrompt = findViewById(R.id.textPrompt);
         turnPrompt = findViewById(R.id.turnPrompt);
-        leftArrow = findViewById(R.id.left_arrow_button);
-        rightArrow = findViewById(R.id.right_arrow_button);
-        upArrow = findViewById(R.id.up_arrow_button);
-        downArrow = findViewById(R.id.down_arrow_button);
         warMenu = findViewById(R.id.warMenu);
 
         myGame = new GameLogic(this,intent.getIntExtra("lobbyID", 0), (GameLogic.Color) intent.getSerializableExtra("color"));
@@ -220,10 +212,6 @@ public class GameActivity extends AppCompatActivity {
                             shuffle(cellsImage, myGame.getGamePlayers());
                             myGame.addCnt();
                         }).start();
-                        rightArrow.setVisibility(View.VISIBLE);
-                        leftArrow.setVisibility(View.VISIBLE);
-                        upArrow.setVisibility(View.VISIBLE);
-                        downArrow.setVisibility(View.VISIBLE);
                     }
                 });
             }

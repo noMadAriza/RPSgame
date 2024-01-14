@@ -72,6 +72,8 @@ io.on("connection", (socket) => {
         count: 0,
         redPlayer: null,
         bluePlayer: null,
+        redChoice: undefined,
+        blueChoice : undefined,
         board: board
       };
     }
@@ -139,12 +141,19 @@ io.on("connection", (socket) => {
   });
   /* in case a war occurs */
   socket.on("tie", async (lobbyID,callback) => {
-    let types = await tie(lobbyID,io.sockets.adapter.rooms[lobbyID].redPlayer,io.sockets.adapter.rooms[lobbyID].bluePlayer);
+    io.to(lobbyID).emit("showWarMenu");
+    const res = await war(lobbyID,null,null);
+    io.sockets.adapter.rooms[lobbyID].redChoice = undefined;
+    io.sockets.adapter.rooms[lobbyID].blueChoice = undefined;
     console.log("afterTie");
     callback({
-      redPlayer: types.redType,
-      bluePlayer: types.blueType
+      redPlayer: res.redType,
+      bluePlayer: res.blueType
     });
+  });
+  // gets the player choice from the war menu
+  socket.on("clickedOnMenu",(lobbyID,color,type) => {
+    war(lobbyID,color,type);
   });
   /*every time a player is in the lobby it asks for the game to start.
   when MAX_PLAYERS_LOBBY players asks it in the same server it will start 
@@ -236,7 +245,7 @@ function makeBoard(board,BOARD_SIZE){
     }
   }
 }
-/* hide all the players of the color given and with no visibility */
+//hide all the players of the color given and with no visibility
 function hidePlayers(matrix,color){
   var res = [];
   for (let row = 0; row < matrix.length;row++){
@@ -253,45 +262,35 @@ function hidePlayers(matrix,color){
   }
   return res;
 }
-// gets lobbyID and 2 sockets.ID playing in the lobby and starts the war between them. returns winner!
-async function tie(lobbyID,redPlayer,bluePlayer){
-  var cnt = 0;
+// returns a promise that will resolve only after 2 players clicked the warMenu!
+async function war(lobbyID,color,type){
   let mutex = lobbiesMutex.get(lobbyID);
-  let redType, blueType;
-  console.log("here in Tie");
-  const socektBlue = io.sockets.sockets.get(bluePlayer);
-  const socketRed = io.sockets.sockets.get(redPlayer);
-  let promise = new Promise((resolve, reject) => {
-    io.to(lobbyID).emit("showWarMenu", async() =>{
-      socektBlue.on("clickedOnMenu", async (color,type) => { //only when clicking the menu
-        console.log("chose from the menu has been registered from blueSocket with type: " + type);
-        blueType = type;
-        const release = await mutex.acquire();
-        try{
-          cnt++;
-          if(cnt == MAX_PLAYERS_LOBBY)
-            resolve();
-        }finally{
-          release();
+  await mutex.acquire();
+  if(color == Color.BLUE)
+    io.sockets.adapter.rooms[lobbyID].blueChoice = type;
+  else if (color == Color.RED)
+    io.sockets.adapter.rooms[lobbyID].redChoice = type;
+  mutex.release();
+  if(color != null)
+    return;
+  return new Promise((resolve, reject) => {
+    try{
+      const interval = setInterval(async() => {
+        await mutex.acquire();
+        let redType = io.sockets.adapter.rooms[lobbyID].redChoice;
+        let blueType = io.sockets.adapter.rooms[lobbyID].blueChoice;
+        if (redType != undefined && blueType != undefined) {
+          clearInterval(interval);
+          resolve({redType,blueType})
         }
-      });
-      socketRed.on("clickedOnMenu", async (color,type) => { //only when clicking the menu
-        console.log("chose from the menu has been registered from redSocket with type: " + type);
-        redType = type;
-        const release = await mutex.acquire();
-        try{
-          cnt++;
-          if(cnt == MAX_PLAYERS_LOBBY)
-            resolve();
-        }finally{
-          release();
-        }
-      });
-    });
+        mutex.release();
+      }, 3000); // Check every 3 seconds
+    }catch{
+      reject("fail");
+    }finally{
+      mutex.release();
+    }
   });
-  await promise; // wait for both players to respond
-  console.log("end of Tie");
-  return {redType,blueType};
 }
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
