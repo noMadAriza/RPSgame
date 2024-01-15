@@ -78,6 +78,15 @@
         android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@id/guidelineLeft"
         app:layout_constraintTop_toTopOf="@id/guidelineBottom" />
+    <FrameLayout
+        android:id="@+id/transparentSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:visibility="invisible">
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/warMenu"

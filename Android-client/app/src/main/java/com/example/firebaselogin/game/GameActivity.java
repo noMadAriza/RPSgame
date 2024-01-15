@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -68,6 +69,7 @@ public class GameActivity extends AppCompatActivity {
     Drawable highLight_question_red;
     Drawable highLight_question_blue;
 
+    FrameLayout transparentSheet;
     ImageView rockMenuChoose;
     ImageView paperMenuChoose;
     ImageView scissorsMenuChoose;
@@ -123,6 +125,7 @@ public class GameActivity extends AppCompatActivity {
         highLight_scissors_red = getDrawable(R.drawable.highlight_red_scissors);
         highLight_hole = getDrawable(R.drawable.hole_highlight);
 
+        transparentSheet = findViewById(R.id.transparentSheet);
         rockMenuChoose = findViewById(R.id.rockMenuChoose);
         paperMenuChoose = findViewById(R.id.paperMenuChoose);
         scissorsMenuChoose = findViewById(R.id.scissorsMenuChoose);
@@ -405,6 +408,7 @@ public class GameActivity extends AppCompatActivity {
     public void showMenu() {
         System.out.println("showing menu!");
         runOnUiThread(() ->{
+            transparentSheet.setVisibility(View.VISIBLE);
             warMenu.setVisibility(View.VISIBLE);
             rockMenuChoose.setOnClickListener(view -> {
                 clickWarMenu(Player.Players.ROCK);
@@ -426,6 +430,7 @@ public class GameActivity extends AppCompatActivity {
     //hides the war menu
     public void hideMenu(){
         runOnUiThread(() -> {
+            transparentSheet.setVisibility(View.INVISIBLE);
             warMenu.setVisibility(View.INVISIBLE);
             rockMenuChoose.setOnClickListener(null);
             scissorsMenuChoose.setOnClickListener(null);
