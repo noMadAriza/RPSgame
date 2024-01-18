@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.main;
+package com.RPS.main;
 
 import static java.lang.Thread.sleep;
 
@@ -11,11 +11,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.RPS.firebaselogin.leaderboards.LeaderBoardsActivity;
-import com.RPS.firebaselogin.game.GameLogic;
+import com.RPS.leaderboards.LeaderBoardsActivity;
+import com.RPS.game.GameLogic;
 import com.RPS.firebaselogin.R;
-import com.RPS.firebaselogin.game.GameActivity;
-import com.RPS.firebaselogin.utilities.LinkedListPair;
+import com.RPS.game.GameActivity;
+import com.RPS.utilities.LinkedListPair;
 
 import java.util.LinkedList;
 

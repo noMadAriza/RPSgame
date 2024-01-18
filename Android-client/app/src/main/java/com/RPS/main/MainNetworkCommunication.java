@@ -1,8 +1,8 @@
-package com.RPS.firebaselogin.main;
+package com.RPS.main;
 
-import com.RPS.firebaselogin.game.GameLogic;
-import com.RPS.firebaselogin.utilities.LinkedListPair;
-import com.RPS.firebaselogin.utilities.SocketIOManager;
+import com.RPS.game.GameLogic;
+import com.RPS.utilities.LinkedListPair;
+import com.RPS.utilities.SocketIOManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;

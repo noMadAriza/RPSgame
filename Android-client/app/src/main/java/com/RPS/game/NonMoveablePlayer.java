@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.game;
+package com.RPS.game;
 
 public class NonMoveablePlayer extends Player {
     public NonMoveablePlayer(GameLogic myGame, Players type, GameLogic.Color color, int row, int column){

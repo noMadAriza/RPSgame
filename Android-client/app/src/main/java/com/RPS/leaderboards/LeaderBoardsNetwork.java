@@ -1,6 +1,6 @@
-package com.RPS.firebaselogin.leaderboards;
+package com.RPS.leaderboards;
 
-import com.RPS.firebaselogin.utilities.SocketIOManager;
+import com.RPS.utilities.SocketIOManager;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

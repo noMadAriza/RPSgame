@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.game;
+package com.RPS.game;
 
 import static java.lang.Thread.sleep;
 
@@ -23,7 +23,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.RPS.firebaselogin.main.MainActivity;
+import com.RPS.main.MainActivity;
 import com.RPS.firebaselogin.R;
 
 public class GameActivity extends AppCompatActivity {

@@ -1,9 +1,7 @@
-package com.RPS.firebaselogin.game;
+package com.RPS.game;
 
 
-import static com.RPS.firebaselogin.game.GameConstants.BOARD_SIZE;
-
-import com.RPS.firebaselogin.utilities.SocketIOManager;
+import com.RPS.utilities.SocketIOManager;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -74,9 +72,9 @@ public class GameCommunication {
     public void updateServer(Player[][] gamePlayers, int lobbyID) throws JSONException {
         gamePlayers = (Player[][]) GameLogic.rotate(gamePlayers,gameLogic.getColor());
         JSONArray jsonMatrix = new JSONArray();
-        for (int row = 0; row < BOARD_SIZE; row++) {
+        for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
             JSONArray jsonInnerArray = new JSONArray(); // for each row
-            for (int column = 0; column < BOARD_SIZE; column++) {
+            for (int column = 0; column < GameConstants.BOARD_SIZE; column++) {
                 JSONObject playerObject = new JSONObject();
                 if(gamePlayers[row][column] != null) { // sends all the players
                     playerObject.put("value", gamePlayers[row][column].getType().ordinal());

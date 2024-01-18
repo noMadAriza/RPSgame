@@ -1,6 +1,6 @@
-package com.RPS.firebaselogin.leaderboards;
+package com.RPS.leaderboards;
 
-import com.RPS.firebaselogin.utilities.DataBaseCommunication;
+import com.RPS.utilities.DataBaseCommunication;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONObject;

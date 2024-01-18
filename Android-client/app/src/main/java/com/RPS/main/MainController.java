@@ -1,8 +1,8 @@
-package com.RPS.firebaselogin.main;
+package com.RPS.main;
 
-import com.RPS.firebaselogin.utilities.DataBaseCommunication;
-import com.RPS.firebaselogin.game.GameLogic;
-import com.RPS.firebaselogin.utilities.LinkedListPair;
+import com.RPS.utilities.DataBaseCommunication;
+import com.RPS.game.GameLogic;
+import com.RPS.utilities.LinkedListPair;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONObject;

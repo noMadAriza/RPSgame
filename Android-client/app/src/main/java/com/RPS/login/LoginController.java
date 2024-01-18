@@ -1,8 +1,8 @@
-package com.RPS.firebaselogin.login;
+package com.RPS.login;
 
 import android.content.Context;
 
-import com.RPS.firebaselogin.utilities.DataBaseCommunication;
+import com.RPS.utilities.DataBaseCommunication;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.concurrent.CompletableFuture;

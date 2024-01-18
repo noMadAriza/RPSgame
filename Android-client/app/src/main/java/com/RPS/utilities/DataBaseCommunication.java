@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.utilities;
+package com.RPS.utilities;
 
 import android.content.Context;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.main;
+package com.RPS.main;
 
 import com.android.volley.RequestQueue;
 

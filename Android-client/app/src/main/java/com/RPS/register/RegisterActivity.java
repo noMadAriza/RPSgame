@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.register;
+package com.RPS.register;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.RPS.firebaselogin.R;
-import com.RPS.firebaselogin.main.MainActivity;
+import com.RPS.main.MainActivity;
 
 public class RegisterActivity extends AppCompatActivity {
     RegisterController logic;

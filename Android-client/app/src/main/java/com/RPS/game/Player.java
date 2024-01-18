@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.game;
+package com.RPS.game;
 
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;

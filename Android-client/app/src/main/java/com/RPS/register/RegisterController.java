@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.register;
+package com.RPS.register;
 
 import static android.content.ContentValues.TAG;
 
@@ -8,7 +8,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.RPS.firebaselogin.utilities.DataBaseCommunication;
+import com.RPS.utilities.DataBaseCommunication;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;

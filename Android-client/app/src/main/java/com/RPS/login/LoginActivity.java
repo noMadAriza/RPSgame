@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.login;
+package com.RPS.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.RPS.firebaselogin.R;
-import com.RPS.firebaselogin.register.RegisterActivity;
-import com.RPS.firebaselogin.register.RegisterController;
-import com.RPS.firebaselogin.main.MainActivity;
+import com.RPS.register.RegisterActivity;
+import com.RPS.register.RegisterController;
+import com.RPS.main.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
     private final Context context = this;

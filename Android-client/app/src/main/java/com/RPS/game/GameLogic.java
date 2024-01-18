@@ -1,11 +1,11 @@
-package com.RPS.firebaselogin.game;
+package com.RPS.game;
 
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
-import com.RPS.firebaselogin.utilities.DataBaseCommunication;
-import com.RPS.firebaselogin.utilities.SocketIOManager;
+import com.RPS.utilities.DataBaseCommunication;
+import com.RPS.utilities.SocketIOManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONArray;

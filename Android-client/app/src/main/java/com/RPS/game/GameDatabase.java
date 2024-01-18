@@ -1,9 +1,9 @@
-package com.RPS.firebaselogin.game;
+package com.RPS.game;
 
+import com.RPS.utilities.DataBaseCommunication;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
-import com.RPS.firebaselogin.utilities.DataBaseCommunication;
 
 import java.util.HashMap;
 import java.util.Map;

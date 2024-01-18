@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.utilities;
+package com.RPS.utilities;
 
 
 import com.google.firebase.auth.FirebaseAuth;

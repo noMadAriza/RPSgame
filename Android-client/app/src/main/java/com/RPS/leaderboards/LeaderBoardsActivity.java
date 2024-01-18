@@ -1,4 +1,4 @@
-package com.RPS.firebaselogin.leaderboards;
+package com.RPS.leaderboards;
 
 import androidx.appcompat.app.AppCompatActivity;
 
