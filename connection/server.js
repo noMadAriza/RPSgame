@@ -33,7 +33,7 @@ const Color = {
 
 const mapMutex = new Mutex();  //mutex for accesing the lobbiesMutex map
 const lobbiesMutex = new Map(); //all lobies mutex
-const clients = new Map();  //for each user_id it will have a socket_id which it is using
+const clients = new Map();  //for each user_id it will have lobbyId associated 
 const clientsMutex = new Mutex(); //mutex for the map of all users
 
 //Socket.io Connection------------------

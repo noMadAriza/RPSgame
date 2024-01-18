@@ -1,4 +1,5 @@
 *.pem
+/other
 /help
 ### STS ###
 .apt_generated
