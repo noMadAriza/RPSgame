@@ -36,7 +36,8 @@ public class GameCommunication {
                 try {
                     gameLogic.getDataFromServer(jsonObject);
                     gameActivity.updateUI(gameLogic.getGamePlayers());
-                    gameLogic.setMyTurn(true);
+                    if(gameLogic.getCnt() >= 2) //placed 2 initialized players (flag,trap)
+                        gameLogic.setMyTurn(true);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -31,9 +31,15 @@ public class SocketIOManager implements SocketManager {
         Socket socket = null;
         try {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            socket = IO.socket(URI);
+            IO.Options options = IO.Options.builder()
+                    .setReconnection(true)
+                    .setReconnectionDelay(400)
+                    .setReconnectionDelayMax(1500)
+                    .setRandomizationFactor(0)
+                    .build();
+            options.query = "user_id=" + mAuth.getUid();
+            socket = IO.socket(URI,options);
             socket.connect();
-            socket.emit("afterConnection",mAuth.getUid());
         }catch (Exception e){
             e.printStackTrace();
         }

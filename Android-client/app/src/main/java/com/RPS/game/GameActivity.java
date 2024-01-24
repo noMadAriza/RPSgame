@@ -31,6 +31,7 @@ public class GameActivity extends AppCompatActivity {
     GameLogic myGame;
     final int cntPlayer = 4;
     int screenHeight;
+    boolean waitingBool = true;
 
     Drawable darkSquare;
     Drawable lightSquare;
@@ -137,7 +138,7 @@ public class GameActivity extends AppCompatActivity {
         new Thread(() -> {
             int added = 0;
             String text;
-            while(textPrompt.getVisibility() == View.VISIBLE){
+            while(waitingBool){
                 try {
                     text = null;
                     if(added >= 3){
@@ -209,6 +210,7 @@ public class GameActivity extends AppCompatActivity {
 
     /*starting game  enables the player to choose where to place his flag and trap*/
     private void startGame(ImageView[][] cellsImage){
+        waitingBool = false;
         runOnUiThread(() -> {
             textPrompt.setText("choose where to place your flag ");
         });

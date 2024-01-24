@@ -10,6 +10,7 @@
     <EditText
         android:id="@+id/usernameInput"
         android:layout_width="0dp"
+        android:textColorHint="@color/black"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
@@ -23,6 +24,7 @@
 
     <EditText
         android:id="@+id/emailInput"
+        android:textColorHint="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -37,6 +39,7 @@
 
     <EditText
         android:id="@+id/passwordInput"
+        android:textColorHint="@color/black"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="26sp"
