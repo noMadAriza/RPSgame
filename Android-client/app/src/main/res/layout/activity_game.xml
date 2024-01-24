@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="waiting for player"
+        android:background="@color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@id/guidelineRight"
         app:layout_constraintStart_toEndOf="@id/guidelineLeft"

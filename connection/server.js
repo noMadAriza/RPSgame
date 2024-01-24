@@ -14,7 +14,12 @@ const server = app.listen(PORT); //tells to host server on localhost:3000
 app.use(express.static('public')); //show static files in 'public' directory
 console.log('Server is running');
 
-const io = socket(server);
+const io = socket(server, {
+  connectionStateRecovery: {
+    maxDisconnectionDuration: 2 * 60 * 1000,
+    skipMiddlewares: true,
+  }
+});
 const BOARD_SIZE = 7;
 const Player = {
   EMPTY_CELL: 0,
@@ -30,30 +35,42 @@ const Color = {
   BLUE: 'BLUE',
   RED: 'RED'
 }
-
+var lobbyCnt = 0;
+const MAX_LOBBIES = 100000;
 const mapMutex = new Mutex();  //mutex for accesing the lobbiesMutex map
 const lobbiesMutex = new Map(); //all lobies mutex
 const clients = new Map();  //for each user_id it will have lobbyId associated 
 const clientsMutex = new Mutex(); //mutex for the map of all users
 
 //Socket.io Connection------------------
-io.on("connection", (socket) => {
-  console.log("connected !");
-  var userID;
-  //adds the socket to clients map to be listed
-  socket.on("afterConnection",async(user_id) => {
-    userID = user_id;
-    const release = await clientsMutex.acquire();
-    clients.set(user_id,true);
-    release();
-  });
+io.on("connection", async (socket) => {
+  const release = await clientsMutex.acquire();
+  var userID = socket.handshake.query.user_id;
+  if(clients.has(userID) && clients.get(userID) != undefined){ //meaning the player is in a game!
+    console.log("here");
+    socket.join(clients.get(userID));
+    let colorToHide;
+    if(io.sockets.adapter.rooms[lobbyID].redPlayer == userID)
+      colorToHide = Color.BLUE;
+    else
+      colorToHide = Color.RED;
+    let data = {
+      board : hidePlayers(io.sockets.adapter.rooms[lobbyID].board,colorToHide)
+    }
+    socket.emit("updateFromServer",data);
+  }
+  else
+    clients.set(clients.set(userID,undefined));
+  release();
+  console.log("connected user_id:" + userID);
   //creates a new lobby 
   socket.on("newLobby", async(callback) => {
-    var lobbyID = 0;
     const release = await mapMutex.acquire();
     try{
-      while(lobbyID == 0 || lobbiesMutex.has(lobbyID))
-        var lobbyID = getRandomArbitrary(100000,999999);
+      lobbyCnt++;
+      if(lobbyCnt >= MAX_LOBBIES)
+        lobbyCnt = 1;
+      lobbyID = lobbyCnt;
       lobbiesMutex.set(lobbyID,new Mutex());
     }finally {(release()) }
     console.log("created a new lobby named: ",lobbyID);
@@ -62,8 +79,11 @@ io.on("connection", (socket) => {
     });
   });
   /* gets a lobbyID and joins it and returning the color of the player*/
-  socket.on("joinLobby",(lobbyID,callback) =>{
+  socket.on("joinLobby", async (lobbyID,callback) =>{
     var color = null;
+    await clientsMutex.acquire();
+    clients.set(userID,lobbyID);
+    clientsMutex.release();
     if (io.sockets.adapter.rooms[lobbyID] == undefined) {
       board = [];
       makeBoard(board,BOARD_SIZE);
@@ -80,13 +100,12 @@ io.on("connection", (socket) => {
       if(io.sockets.adapter.rooms[lobbyID].redPlayer == null){
         color = Color.RED;
         io.sockets.adapter.rooms[lobbyID].creator = userID;
-        console.log(userID);
-        io.sockets.adapter.rooms[lobbyID].redPlayer = socket.id;
+        io.sockets.adapter.rooms[lobbyID].redPlayer = userID;
         socket.join(lobbyID);
       }
       else if(io.sockets.adapter.rooms[lobbyID].bluePlayer == null){
         color = Color.BLUE;
-        io.sockets.adapter.rooms[lobbyID].bluePlayer = socket.id;
+        io.sockets.adapter.rooms[lobbyID].bluePlayer = userID;
         socket.join(lobbyID);
       }
       callback({
@@ -216,7 +235,7 @@ io.on("connection", (socket) => {
   /*  before a player disconnects from the server:
   closing the lobby he was in and consider the other player in the lobby as the winner
   making the client offline */
-  socket.on("disconnecting",() => {
+  socket.on("disconnected",() => {
     const itarator = io.sockets.adapter.sids.get(socket.id).keys();
     const size = io.sockets.adapter.sids.get(socket.id).size;
     for (let i = 0; i < size; i++) {
