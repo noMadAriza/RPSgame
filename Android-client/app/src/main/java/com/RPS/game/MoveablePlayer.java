@@ -2,6 +2,8 @@ package com.RPS.game;
 
 import android.widget.ImageView;
 
+import java.util.Random;
+
 public class MoveablePlayer extends Player {
     public enum Direction {
         FORWARD,
@@ -43,5 +45,9 @@ public class MoveablePlayer extends Player {
                     break;
             }
             return true;
+    }
+    public static Players getRandomPlayer(){
+        int rand = (int) Math.floor(1 + Math.random() * 3);
+        return Players.values()[rand];
     }
 }

@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -28,6 +29,7 @@ import com.RPS.firebaselogin.R;
 
 public class GameActivity extends AppCompatActivity {
 
+    public static final int USER_TIME_TO_PLAY = 10;
     GameLogic myGame;
     final int cntPlayer = 4;
     int screenHeight;
@@ -79,6 +81,7 @@ public class GameActivity extends AppCompatActivity {
     TableLayout board;
     TextView textPrompt;
     TextView turnPrompt;
+    ProgressBar timerUI;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -127,6 +130,8 @@ public class GameActivity extends AppCompatActivity {
         highLight_scissors_red = getDrawable(R.drawable.highlight_red_scissors);
         highLight_hole = getDrawable(R.drawable.hole_highlight);
 
+        timerUI = findViewById(R.id.progressBar);
+        timerUI.setMax(USER_TIME_TO_PLAY);
         transparentSheet = findViewById(R.id.transparentSheet);
         rockMenuChoose = findViewById(R.id.rockMenuChoose);
         paperMenuChoose = findViewById(R.id.paperMenuChoose);
@@ -435,6 +440,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void showMenu() {
         System.out.println("showing menu!");
+
         runOnUiThread(() ->{
             transparentSheet.setVisibility(View.VISIBLE);
             warMenu.setVisibility(View.VISIBLE);
@@ -452,6 +458,7 @@ public class GameActivity extends AppCompatActivity {
     // clicked on the war-menu
     private void clickWarMenu(Player.Players type){
         myGame.sendMenuChoose(type);
+        myGame.stopTimer();
         hideMenu();
     }
 
@@ -533,5 +540,17 @@ public class GameActivity extends AppCompatActivity {
             else
                 turnPrompt.setVisibility(View.INVISIBLE);
         });
+    }
+
+    public void setTime(int time) {
+        runOnUiThread(() -> {
+            timerUI.setVisibility(View.VISIBLE);
+            timerUI.setProgress(time);
+        });
+    }
+
+    public void expiredWar() {
+        Player.Players randomPlayer = MoveablePlayer.getRandomPlayer();
+        clickWarMenu(randomPlayer);
     }
 }

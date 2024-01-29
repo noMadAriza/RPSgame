@@ -51,6 +51,8 @@ public class GameCommunication {
             socket.on("showWarMenu", args -> {
                 System.out.println("got showing menu emit !");
                 gameActivity.showMenu();
+                gameLogic.stopTimer();
+                gameLogic.startTimer();
             });
             // receives the color of the winner
             socket.on("winner", args -> {
@@ -71,6 +73,7 @@ public class GameCommunication {
     /* parameters: player matrix and lobbyId,
     sends to the lobbyID the game board information */
     public void updateServer(Player[][] gamePlayers, int lobbyID) throws JSONException {
+        gameLogic.stopTimer();
         gamePlayers = (Player[][]) GameLogic.rotate(gamePlayers,gameLogic.getColor());
         JSONArray jsonMatrix = new JSONArray();
         for (int row = 0; row < GameConstants.BOARD_SIZE; row++) {
@@ -128,6 +131,7 @@ public class GameCommunication {
     //sends type to the server after clicking on war menu
     public void sendMenuChoose(Player.Players type){
         socket.emit("clickedOnMenu", gameLogic.getLobbyID(),gameLogic.getColor().name(),type.ordinal());
+        gameLogic.stopTimer();
     }
 
     /* gets boolean winner and realGame

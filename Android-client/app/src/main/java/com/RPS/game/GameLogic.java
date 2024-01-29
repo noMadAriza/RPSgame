@@ -1,8 +1,11 @@
 package com.RPS.game;
 
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+
+import androidx.annotation.UiThread;
 
 import com.RPS.utilities.DataBaseCommunication;
 import com.RPS.utilities.SocketIOManager;
@@ -37,6 +40,7 @@ public class GameLogic {
     GameDatabase database;
     GameActivity activity;
     FirebaseAuth mAuth;
+    private Timer timer;
 
     public GameLogic(GameActivity activity,int lobby, Color color){
         this.lobbyID = lobby;
@@ -159,6 +163,7 @@ public class GameLogic {
 
     // gets data from server and updates the data in the local device
     public void getDataFromServer(JSONObject jsonObject) throws JSONException{
+        startTimer();
         JSONObject[][] jsonMatrix = convertToMatrix(jsonObject);
         jsonMatrix = rotate(jsonMatrix,color);
         updateBoard(jsonMatrix);
@@ -294,7 +299,7 @@ public class GameLogic {
                 }
                 if(winner == player)
                     player.move(gamePlayers,cellsImage,direction);
-                communication.updateServer(gamePlayers,lobbyID);
+                updateServer();
                 activity.updateUI(gamePlayers);
                 makeClickable(player);
                 return ;
@@ -487,5 +492,13 @@ public class GameLogic {
         if(insideGameBoard(row,column) && (gamePlayers[row][column] == null || gamePlayers[row][column].getType() == Player.Players.EMPTY_CELL))
             return true;
         return false;
+    }
+    public void startTimer(){
+        timer = new Timer(this,activity,activity.USER_TIME_TO_PLAY);
+        timer.start();
+    }
+    public void stopTimer(){
+        if(timer != null)
+            timer.stopTimer();
     }
 }

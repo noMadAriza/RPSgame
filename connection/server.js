@@ -39,16 +39,17 @@ var lobbyCnt = 0;
 const MAX_LOBBIES = 100000;
 const mapMutex = new Mutex();  //mutex for accesing the lobbiesMutex map
 const lobbiesMutex = new Map(); //all lobies mutex
-const clients = new Map();  //for each user_id it will have lobbyId associated 
+const clients_lobby = new Map();  //for each user_id it will have a lobbyId associated 
+const clients_socket = new Map(); //for each user_id it will have a socket_id
 const clientsMutex = new Mutex(); //mutex for the map of all users
 
 //Socket.io Connection------------------
 io.on("connection", async (socket) => {
   const release = await clientsMutex.acquire();
   var userID = socket.handshake.query.user_id;
-  if(clients.has(userID) && clients.get(userID) != undefined){ //meaning the player is in a game!
-    console.log("here");
-    socket.join(clients.get(userID));
+  clients_socket.set(userID,socket.id);
+  if(clients_lobby.has(userID) && clients_lobby.get(userID) != undefined){ //meaning the player is in a game!
+    socket.join(clients_lobby.get(userID));
     let colorToHide;
     if(io.sockets.adapter.rooms[lobbyID].redPlayer == userID)
       colorToHide = Color.BLUE;
@@ -60,7 +61,7 @@ io.on("connection", async (socket) => {
     socket.emit("updateFromServer",data);
   }
   else
-    clients.set(clients.set(userID,undefined));
+    clients_lobby.set(clients_lobby.set(userID,undefined));
   release();
   console.log("connected user_id:" + userID);
   //creates a new lobby 
@@ -82,7 +83,7 @@ io.on("connection", async (socket) => {
   socket.on("joinLobby", async (lobbyID,callback) =>{
     var color = null;
     await clientsMutex.acquire();
-    clients.set(userID,lobbyID);
+    clients_lobby.set(userID,lobbyID);
     clientsMutex.release();
     if (io.sockets.adapter.rooms[lobbyID] == undefined) {
       board = [];
@@ -191,7 +192,7 @@ io.on("connection", async (socket) => {
     await mapMutex.acquire();
     io.to(lobbyID).emit("winner",color);
     mapMutex.release();
-    closeLobby(socket,lobbyID);
+    closeLobby(lobbyID);
   });
   //gets list of users_id and has a callback returning 2 arrays of connected and offline users from the list given (user_id,socket_id)
   socket.on("getConnectedClients", async(list,callback) => {
@@ -199,9 +200,8 @@ io.on("connection", async (socket) => {
     let offline = [];
     for(let i = 0; i < list.length; i++){
       console.log(list[i]);
-      if(clients.has(list[i].user_id)){
+      if(clients_socket.has(list[i].user_id))
         connected.push(list[i]);
-      }
       else
         offline.push(list[i]);
     }
@@ -235,16 +235,9 @@ io.on("connection", async (socket) => {
   /*  before a player disconnects from the server:
   closing the lobby he was in and consider the other player in the lobby as the winner
   making the client offline */
-  socket.on("disconnected",() => {
-    const itarator = io.sockets.adapter.sids.get(socket.id).keys();
-    const size = io.sockets.adapter.sids.get(socket.id).size;
-    for (let i = 0; i < size; i++) {
-      let lobbyID = itarator.next().value;
-      if (lobbyID != socket.id) {// Ignore the default room
-        socket.to(lobbyID).emit("winner","disconnected");
-        closeLobby(socket,lobbyID);
-      }
-    }
+  socket.on("disconnect",() => {
+    socket.to(lobbyID).emit("winner","disconnected");
+    closeLobby(lobbyID)
     deleteUser(userID);
   });
 
@@ -316,12 +309,12 @@ function sleep(ms) {
 }
 
 // closes lobby number lobbyID
-async function closeLobby(socket,lobbyID){
+async function closeLobby(lobbyID){
   console.log("delete lobby " + lobbyID);
-  socket.leave(lobbyID);
   await mapMutex.acquire();
   io.sockets.adapter.rooms[lobbyID] = undefined;
   lobbiesMutex.delete(lobbyID);
+  io.socketsLeave(lobbyID);
   mapMutex.release();
 }
 
@@ -329,7 +322,8 @@ async function closeLobby(socket,lobbyID){
 async function deleteUser(userID){
   if(userID != undefined && userID != null){
     await clientsMutex.acquire();
-    clients.delete(userID);
+    clients_lobby.delete(userID);
+    clients_socket.delete(userID);
     clientsMutex.release();
   }
 }

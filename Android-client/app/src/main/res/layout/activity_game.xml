@@ -64,7 +64,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="waiting for player"
-        android:background="@color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@id/guidelineRight"
         app:layout_constraintStart_toEndOf="@id/guidelineLeft"
@@ -127,12 +126,27 @@
             android:id="@+id/scissorsMenuChoose"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight=".33"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:visibility="visible"
-            app:layout_constraintStart_toEndOf="@+id/paperMenuChoose"
-            android:layout_weight = ".33" />
+            app:layout_constraintStart_toEndOf="@+id/paperMenuChoose" />
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style= "?android:progressBarStyleHorizontal"
+        android:progress="100"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guidelineLeft"
+        android:layout_marginBottom="15sp">
+
+    </ProgressBar>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

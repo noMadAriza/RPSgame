@@ -62,11 +62,11 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
         else if(!RegisterController.validPassword(password)){
-            Toast.makeText(getApplicationContext(),"password must be at least " + RegisterController.PASS_MIN_CHAR + "characters",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"password must be at least " + RegisterController.PASS_MIN_CHAR + " characters",Toast.LENGTH_SHORT).show();
             return false;
         }
         else if(!RegisterController.validUsername(username)){
-            Toast.makeText(getApplicationContext(),"password must be at least " + RegisterController.USER_MIN_CHAR + "characters",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"username must be at least " + RegisterController.USER_MIN_CHAR + " characters",Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
