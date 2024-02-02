@@ -1,5 +1,6 @@
 package com.RPS.leaderboards;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.RPS.utilities.DataBaseCommunication;
@@ -17,10 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class LeaderBoardsDatabase {
+public class LeaderBoardsDatabase extends DataBaseCommunication{
     final RequestQueue queue;
 
-    public LeaderBoardsDatabase(RequestQueue queue){
+    public LeaderBoardsDatabase(Context context, RequestQueue queue){
+        super(context);
         this.queue = queue;
     }
 
@@ -75,4 +77,5 @@ public class LeaderBoardsDatabase {
     public CompletableFuture<JSONObject> getUserWithID(String id) {
         return DataBaseCommunication.getUser(queue,id);
     }
+
 }

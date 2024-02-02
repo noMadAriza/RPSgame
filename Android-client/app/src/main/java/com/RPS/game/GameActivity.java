@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -26,6 +28,8 @@ import android.widget.Toast;
 
 import com.RPS.main.MainActivity;
 import com.RPS.firebaselogin.R;
+
+import java.io.IOException;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -82,7 +86,8 @@ public class GameActivity extends AppCompatActivity {
     TextView textPrompt;
     TextView turnPrompt;
     ProgressBar timerUI;
-
+    MediaPlayer mediaPlayer;
+    MediaPlayer mediaPlayerTurn;
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +134,14 @@ public class GameActivity extends AppCompatActivity {
         highLight_scissors_blue = getDrawable(R.drawable.highlight_blue_scissors);
         highLight_scissors_red = getDrawable(R.drawable.highlight_red_scissors);
         highLight_hole = getDrawable(R.drawable.hole_highlight);
-
+        mediaPlayer = new MediaPlayer();
+        mediaPlayerTurn = new MediaPlayer();
+        try {
+            mediaPlayerTurn.setDataSource(this.getApplicationContext(),Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.turn_sound));
+            mediaPlayerTurn.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         timerUI = findViewById(R.id.progressBar);
         timerUI.setMax(USER_TIME_TO_PLAY);
         transparentSheet = findViewById(R.id.transparentSheet);
@@ -269,7 +281,7 @@ public class GameActivity extends AppCompatActivity {
                     if(gamePlayers[row][column] == null){ //if the placement is not used for any other player
                         MoveablePlayer player = new MoveablePlayer(myGame,playerType, myGame.getColor(),row,column);
                         setImage(myGame.getCellsImage()[row][column],playerType,myGame.getColor(),isLight(row,column),false);
-                        myGame.makeClickable(player);
+                        makeClickable(imageCells[player.row][player.column],player);
                         playersCnt[rand]--;
                         playersPlaced++;
                     }
@@ -310,7 +322,7 @@ public class GameActivity extends AppCompatActivity {
                 setImage(imageCells[row][column], type, color ,light,false);
             }
         }
-    }   //can be considered to change UI of only enemy for less complexity time
+    }
 
     // gets image and player data and attaches the right Drawable to it
     private void setImage(ImageView image, Player.Players type, GameLogic.Color color, Boolean light,boolean highLight) {
@@ -439,8 +451,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void showMenu() {
-        System.out.println("showing menu!");
-
         runOnUiThread(() ->{
             transparentSheet.setVisibility(View.VISIBLE);
             warMenu.setVisibility(View.VISIBLE);
@@ -535,8 +545,10 @@ public class GameActivity extends AppCompatActivity {
     //shows it's player's turn on the screen
     public void showTurn(boolean turn) {
         runOnUiThread(() -> {
-            if(turn)
+            if(turn) {
                 turnPrompt.setVisibility(View.VISIBLE);
+                mediaPlayerTurn.start();
+            }
             else
                 turnPrompt.setVisibility(View.INVISIBLE);
         });
@@ -552,5 +564,57 @@ public class GameActivity extends AppCompatActivity {
     public void expiredWar() {
         Player.Players randomPlayer = MoveablePlayer.getRandomPlayer();
         clickWarMenu(randomPlayer);
+    }
+    // make this player clickable
+    public void makeClickable(ImageView image,MoveablePlayer player){
+        runOnUiThread(() -> {
+            image.setOnClickListener(view -> {
+                myGame.setLastClicked(player);
+            });
+        });
+    }
+
+    public void startWarMusic() {
+        runOnUiThread(() -> {
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(getApplicationContext(),Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.war_voice));
+                mediaPlayer.prepareAsync();
+                mediaPlayer.setOnPreparedListener(mp -> mp.start());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void startWinnerMusic(){
+        runOnUiThread(() -> {
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(getApplicationContext(),Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.winner_music));
+                mediaPlayer.prepareAsync();
+                mediaPlayer.setOnPreparedListener(mp -> mp.start());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private void startLoserMusic(){
+        runOnUiThread(() -> {
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(getApplicationContext(),Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.loser_music));
+                mediaPlayer.prepareAsync();
+                mediaPlayer.setOnPreparedListener(mp -> mp.start());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    void startEndGameMusic(boolean winner) {
+        if(winner)
+            startWinnerMusic();
+        else
+            startLoserMusic();
     }
 }

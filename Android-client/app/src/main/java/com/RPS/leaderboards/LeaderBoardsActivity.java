@@ -2,16 +2,22 @@ package com.RPS.leaderboards;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Notification;
+import android.app.usage.UsageEvents;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.RPS.firebaselogin.R;
+import com.RPS.utilities.DataBaseCommunication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -126,14 +132,40 @@ LeaderBoardsActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     LinearLayout friendBox = new LinearLayout(getApplicationContext());
                     friendBox.setWeightSum(1);
+                    friendBox.setOrientation(LinearLayout.HORIZONTAL);
                     TextView friendName = new TextView(getApplicationContext());
                     friendName.setLayoutParams(new TableLayout.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .5f));
                     TextView scoreView = new TextView(getApplicationContext());
-                    scoreView.setLayoutParams(new TableLayout.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .3f));
+                    scoreView.setLayoutParams(new TableLayout.LayoutParams(0, TableLayout.LayoutParams.WRAP_CONTENT, .2f));
                     friendName.setText(String.valueOf(place) + ". " + username);
                     scoreView.setText(Integer.toString(score));
-                    if(finalIsOnline)
+                    friendBox.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            PopupMenu popupMenu = new PopupMenu(getApplicationContext(),v);
+                            popupMenu.inflate(R.menu.popping_menu_long_clicked_user);
+                            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    switch (item.getItemId()){
+                                        case R.id.option1:
+                                            controller.inviteUser(username);
+                                            return true;
+                                        case R.id.option2:
+                                            controller.deleteUserWithUsername(username);
+                                            return true;
+                                        default:
+                                            return false;
+                                    }
+                                }
+                            });
+                            popupMenu.show();
+                            return false;
+                        }
+                    });
+                    if(finalIsOnline) {
                         friendBox.setBackgroundColor(Color.GREEN);
+                    }
                     else
                         friendBox.setBackgroundColor(Color.RED);
                     friendBox.addView(friendName);

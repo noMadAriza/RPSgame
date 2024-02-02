@@ -32,4 +32,10 @@ public class FriendsService {
         List<User> users = list.stream().map(userId -> userService.getUserById(userId)).collect(Collectors.toList());
         return users;
     }
+
+    public boolean deleteFriend(String id, String friendId) {
+        String sql = "delete from friendships where user_id = ? AND friend_id = ?";
+        jdbcTemplate.update(sql,id,friendId);
+        return true;
+    }
 }

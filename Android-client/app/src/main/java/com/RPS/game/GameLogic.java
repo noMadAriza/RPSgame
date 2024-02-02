@@ -261,13 +261,6 @@ public class GameLogic {
         }
     }
 
-    // make this player clickable
-    public void makeClickable(MoveablePlayer player){
-        cellsImage[player.row][player.column].setOnClickListener(view -> {
-            setLastClicked(player);
-        });
-    }
-
     // if player can move, will move it, else will not and returns the abiility to move for that direction
     public void move(MoveablePlayer player,MoveablePlayer.Direction direction){
         new Thread(() -> {
@@ -299,56 +292,14 @@ public class GameLogic {
                 }
                 if(winner == player)
                     player.move(gamePlayers,cellsImage,direction);
-                updateServer();
                 activity.updateUI(gamePlayers);
-                makeClickable(player);
-                return ;
+                communication.updateServer(gamePlayers, lobbyID);
+                activity.makeClickable(cellsImage[player.row][player.column],player);
             }catch (Exception e){
                 e.printStackTrace();
             }
         }).start();
     }
-
-    /* checks the move: if the square is empty, will move and returns true.
-    if there's an enemy player. will go to war with and returns true as we used our turn in a war
-    else: false
-     */
-    private boolean checkMove( MoveablePlayer player, MoveablePlayer.Direction direction){
-        int newRow = player.row, newColumn = player.column;
-        Player otherplayer;
-        switch (direction) {
-            case LEFT:
-                newColumn--;
-                break;
-            case RIGHT:
-                newColumn++;
-                break;
-            case FORWARD:
-                newRow--;
-                break;
-            case BACKWARD:
-                newRow++;
-                break;
-        }
-        if(newRow >= GameConstants.BOARD_SIZE || newRow < 0 || newColumn >= GameConstants.BOARD_SIZE || newColumn < 0) // return false cause can't move to outside the board
-            return false;
-        if((otherplayer = gamePlayers[newRow][newColumn]) != null){ //in the place we move to there's a player
-            if(otherplayer.getMycolor() == player.getMycolor()) //they're are both the same color
-                return false;
-            try {
-                Player winner = war(player, gamePlayers[newRow][newColumn]);
-                System.out.println("the war was a success to: " + winner.getMycolor()); // other players is an enemy
-                if(player != winner)//lost the war
-                    return true;
-            }catch (Exception e){ e.printStackTrace(); }
-        }
-        player.move(gamePlayers,cellsImage,direction);
-        return true;
-    }
-
-    /* player is attacking otherPlayer. returns the winner of the battle.
-    in case of a tie we would need a re-choice
-     */
     private Player war(Player player,Player otherPlayer) throws InterruptedException {
         CountDownLatch mutex = new CountDownLatch(1);
         int row = otherPlayer.row, column = otherPlayer.column;
@@ -428,6 +379,7 @@ public class GameLogic {
 
     // finishes the game. the input receives is boolean of whether you won. should be used only for server
     public void finishGame(boolean winner){
+        activity.startEndGameMusic(winner);
         database.changePoints(mAuth.getUid(),winner,lobbyID);
         database = null;
         communication = null;
@@ -443,20 +395,6 @@ public class GameLogic {
             e.printStackTrace();
         }
         return array;
-    }
-
-    // convert player object to JSONObject and return it
-    private JSONObject convertPlayerToJson(Player player) throws JSONException {
-        JSONObject playerObject = new JSONObject();
-        if(player != null) {
-            playerObject.put("value", player.getType().ordinal());
-            playerObject.put("visible", player.visible);
-            playerObject.put("color", player.getMycolor().name());
-        }
-        else{
-            playerObject.put("value", 0);
-        }
-        return playerObject;
     }
 
     //start the game
@@ -487,12 +425,6 @@ public class GameLogic {
         return false;
     }
 
-    // returns true for Empty squares
-    private boolean isEmptySquare(int row,int column){
-        if(insideGameBoard(row,column) && (gamePlayers[row][column] == null || gamePlayers[row][column].getType() == Player.Players.EMPTY_CELL))
-            return true;
-        return false;
-    }
     public void startTimer(){
         timer = new Timer(this,activity,activity.USER_TIME_TO_PLAY);
         timer.start();

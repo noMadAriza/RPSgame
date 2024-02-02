@@ -49,8 +49,8 @@ public class GameCommunication {
             });
             // show choosing menu
             socket.on("showWarMenu", args -> {
-                System.out.println("got showing menu emit !");
                 gameActivity.showMenu();
+                gameActivity.startWarMusic();
                 gameLogic.stopTimer();
                 gameLogic.startTimer();
             });

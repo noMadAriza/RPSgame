@@ -3,6 +3,7 @@ package com.RPS.leaderboards;
 import com.RPS.utilities.DataBaseCommunication;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +16,7 @@ public class LeaderBoardsController {
     final FirebaseAuth mAuth;
 
     public LeaderBoardsController(LeaderBoardsActivity activity){
-        this.leaderBoardsDatabase = new LeaderBoardsDatabase(DataBaseCommunication.getInstance(activity).getQueue());
+        this.leaderBoardsDatabase = new LeaderBoardsDatabase(activity.getApplicationContext(), DataBaseCommunication.getInstance(activity).getQueue());
         this.networkCommunication = new LeaderBoardsNetwork(this);
         this.activity = activity;
         this.mAuth = FirebaseAuth.getInstance();
@@ -59,5 +60,19 @@ public class LeaderBoardsController {
 
     public CompletableFuture<JSONObject> getUser(){
         return leaderBoardsDatabase.getUserWithID(mAuth.getUid());
+    }
+
+    public void inviteUser(String username) {
+    }
+
+    //deletes from friends the user with the username given
+    public void deleteUserWithUsername(String username) {
+        leaderBoardsDatabase.getUserWithUserName(username).thenAccept(res -> {
+            try {
+                leaderBoardsDatabase.deleteUserFriend(mAuth.getUid(),res.getString("user_id"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

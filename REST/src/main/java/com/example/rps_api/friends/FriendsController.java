@@ -4,6 +4,8 @@ import com.example.rps_api.users.User;
 import com.example.rps_api.users.UserService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,5 +31,12 @@ public class FriendsController {
         return friendsService.getFriends(user_id);
     }
 
+    // deletes friend_id from the list of friends of user_id
+    @DeleteMapping("{id}/{friend_id}")
+    public ResponseEntity<Void> deleteFriend(@PathVariable("id") String id, @PathVariable("friend_id") String friend_id){
+        boolean bool = friendsService.deleteFriend(id,friend_id);
+        return bool ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    }
 
 }

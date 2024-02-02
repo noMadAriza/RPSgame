@@ -18,11 +18,11 @@ import java.util.concurrent.CompletableFuture;
 //Singleton
 public class DataBaseCommunication {
 
-    public static final String url = "http://35.158.32.95:8080";
+    public static final String url = "http://10.0.2.2:8080";
     private static volatile DataBaseCommunication instance;
     final RequestQueue queue;
 
-    private DataBaseCommunication(Context context){
+    protected DataBaseCommunication(Context context){
         this.queue = Volley.newRequestQueue(context);
     }
     public static synchronized DataBaseCommunication getInstance(Context context){
@@ -84,6 +84,29 @@ public class DataBaseCommunication {
         );
         queue.add(getRequest);
         return future;
+    }
+
+    //deletes from user's friends the friend with id given in friendID
+    public boolean deleteUserFriend(String id,String friendId){
+        String url = DataBaseCommunication.url + "/friends/" + id + "/" + friendId;
+        JsonObjectRequest deleteResponse = new JsonObjectRequest(Request.Method.DELETE, url, null,
+                new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Error.Response", error.toString());
+                    }
+                }
+        );
+        queue.add(deleteResponse);
+        return true;
     }
 
     public RequestQueue getQueue() {

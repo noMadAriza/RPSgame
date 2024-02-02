@@ -11,8 +11,8 @@ android {
         applicationId "com.RPS.firebaselogin"
         minSdk 24
         targetSdk 33
-        versionCode 7
-        versionName "0.0.6"
+        versionCode 12
+        versionName "0.0.8Test"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
