@@ -1,6 +1,7 @@
 package com.RPS.leaderboards;
 
 import com.RPS.utilities.SocketIOManager;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,6 +27,17 @@ public class LeaderBoardsNetwork {
         socket.emit("getConnectedClients",list, (Ack) args -> {
             System.out.println("just got the response from server:" + ((JSONObject) args[0]).toString());
             future.complete((JSONObject) args[0]);
+        });
+        return future;
+    }
+    //
+    protected CompletableFuture<Boolean> inviteUser(String user_id){
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        socket.emit("invitation",user_id,(Ack) args -> {
+            if((boolean) args[0])
+                future.complete(true);
+            else
+                future.complete(false);
         });
         return future;
     }

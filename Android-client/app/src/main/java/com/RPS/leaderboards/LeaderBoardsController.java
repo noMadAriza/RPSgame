@@ -2,7 +2,9 @@ package com.RPS.leaderboards;
 
 import com.RPS.utilities.DataBaseCommunication;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.JsonArray;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,7 +64,16 @@ public class LeaderBoardsController {
         return leaderBoardsDatabase.getUserWithID(mAuth.getUid());
     }
 
+    // inviting a user with username given
     public void inviteUser(String username) {
+        leaderBoardsDatabase.getUserWithUserName(username).thenAcceptAsync(user -> {
+            try {
+                networkCommunication.inviteUser(user.getString("user_id"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     //deletes from friends the user with the username given
@@ -70,9 +81,20 @@ public class LeaderBoardsController {
         leaderBoardsDatabase.getUserWithUserName(username).thenAccept(res -> {
             try {
                 leaderBoardsDatabase.deleteUserFriend(mAuth.getUid(),res.getString("user_id"));
+                leaderBoardsDatabase.deleteUserFriend(res.getString("user_id"),mAuth.getUid());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    /* returns JsonArray with User info of every player in the requests */
+    public CompletableFuture<JSONArray> getFriendsRequests() {
+        CompletableFuture<JSONArray> response = leaderBoardsDatabase.getFriendsRequests(mAuth.getUid());
+        response.thenAccept(res -> {
+            System.out.println("sex");
+        });
+        System.out.println(response);
+        return response;
     }
 }

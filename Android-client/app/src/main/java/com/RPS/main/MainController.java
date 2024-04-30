@@ -23,9 +23,19 @@ public class MainController {
         this.activity = activity;
     }
 
-    //sends to the network to create a new lobby
+    //sends to the network to create a new lobby and returns the lobby number created
     public CompletableFuture<Integer> createLobby() {
-        return networkCommunication.createLobby();
+        CompletableFuture<Integer> res = new CompletableFuture<>();
+        serverAvailable().thenAccept(lobbyID -> {
+            if(lobbyID != -1)
+                res.complete(lobbyID);
+            else {
+                networkCommunication.createLobby().thenAccept(lobbyID2 -> {
+                    res.complete(lobbyID2);
+                });
+            }
+        });
+        return res;
     }
 
     //join to the lobbyID given
@@ -41,5 +51,9 @@ public class MainController {
     public CompletableFuture<JSONObject> getUser(String user_id) {
         return DataBaseCommunication.getUser(DataBaseCommunication.getInstance(activity).getQueue(),user_id);
 
+    }
+
+    private CompletableFuture<Integer> serverAvailable() {
+        return networkCommunication.serverAvailable();
     }
 }

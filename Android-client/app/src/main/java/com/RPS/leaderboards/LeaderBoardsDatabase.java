@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -78,4 +79,28 @@ public class LeaderBoardsDatabase extends DataBaseCommunication{
         return DataBaseCommunication.getUser(queue,id);
     }
 
+    public CompletableFuture<JSONArray> getFriendsRequests(String user_id) {
+        CompletableFuture<JSONArray> listOfRequests = new CompletableFuture<>();
+            String url = DataBaseCommunication.url + "/friends/" + user_id + "/getRequests";
+            System.out.println(url);
+            JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONArray>()
+                    {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            listOfRequests.complete(response);
+                        }
+                    },
+                    new Response.ErrorListener()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("Error.Response", error.toString());
+                            listOfRequests.completeExceptionally(new Throwable("couldn't retrieve information"));
+                        }
+                    }
+            );
+            queue.add(getRequest);
+        return listOfRequests;
+    }
 }

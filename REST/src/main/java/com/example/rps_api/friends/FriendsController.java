@@ -39,4 +39,10 @@ public class FriendsController {
 
     }
 
+    // gets friends requests for a user
+    @GetMapping("{id}/getRequests")
+    public List<User> getFriendsRequest(@PathVariable("id") String id){
+        return friendsService.getFriendsRequest(id);
+    }
+
 }

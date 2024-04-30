@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 //Singleton
 public class DataBaseCommunication {
 
-    public static final String url = "http://10.0.2.2:8080";
+    public static final String url = "http://35.158.32.95:8080";
     private static volatile DataBaseCommunication instance;
     final RequestQueue queue;
 

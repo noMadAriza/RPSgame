@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="right"
+        android:elevation="50sp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/acceptFriendBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5sp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/black"
+            android:text="accept"
+            app:backgroundTint="#2A737B"
+            app:cornerRadius="5dp"
+            app:strokeColor="@color/black"
+            app:strokeWidth="1.25dp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rejectFriendBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            app:backgroundTint="#FF8C41"
+            app:cornerRadius="5dp"
+            android:text="reject"
+            app:strokeColor="@color/black"
+            app:strokeWidth="1.25dp"
+            />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

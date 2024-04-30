@@ -6,6 +6,7 @@ const { json } = require('express');
 const { parse } = require('path');
 const { stringify } = require('querystring');
 const { availableParallelism } = require('os');
+const { Console } = require('console');
 const app = express();
 var PORT = process.env.PORT || 3000;
 const server = app.listen(PORT); //tells to host server on localhost:3000
@@ -14,6 +15,7 @@ const server = app.listen(PORT); //tells to host server on localhost:3000
 app.use(express.static('public')); //show static files in 'public' directory
 console.log('Server is running');
 
+const SEC = 1000;
 const io = socket(server, {
   connectionStateRecovery: {
     maxDisconnectionDuration: 2 * 60 * 1000,
@@ -42,7 +44,7 @@ const lobbiesMutex = new Map(); //all lobies mutex
 const clients_lobby = new Map();  //for each user_id it will have a lobbyId associated 
 const clients_socket = new Map(); //for each user_id it will have a socket_id
 const clientsMutex = new Mutex(); //mutex for the map of all users
-
+lobbiesWaitingForPlayers = [];
 //Socket.io Connection------------------
 io.on("connection", async (socket) => {
   const release = await clientsMutex.acquire();
@@ -73,10 +75,25 @@ io.on("connection", async (socket) => {
         lobbyCnt = 1;
       lobbyID = lobbyCnt;
       lobbiesMutex.set(lobbyID,new Mutex());
+      lobbiesWaitingForPlayers.push(lobbyID);
     }finally {(release()) }
     console.log("created a new lobby named: ",lobbyID);
     callback({
       lobbyID: lobbyID
+    });
+  });
+
+  // returns server available, if not returns -1
+  socket.on("isServerAvailable", async(callback) => {
+    await mapMutex.acquire();
+    if(lobbiesWaitingForPlayers.length == 0)
+      res = -1;
+    else
+      res = lobbiesWaitingForPlayers[0];
+    lobbiesWaitingForPlayers.shift();
+    mapMutex.release();
+    callback({
+      lobbyID: res
     });
   });
   /* gets a lobbyID and joins it and returning the color of the player*/
@@ -150,7 +167,6 @@ io.on("connection", async (socket) => {
   });
   socket.on("getPlayer",(lobbyID,row,column,callback) => {
     let player = io.sockets.adapter.rooms[lobbyID].board[row][column];
-    console.log("here!");
     console.log("row :" + row + "column: " + column);
     console.log(player);
     callback({
@@ -187,19 +203,22 @@ io.on("connection", async (socket) => {
   });
   //the game in lobbyID ends and gets color of the winner
   socket.on("endGame", async(lobbyID,color) => {
+    let redID = io.sockets.adapter.rooms[lobbyID].redPlayer, blueID = io.sockets.adapter.rooms[lobbyID].bluePlayer
+    console.log("red: " + redID + " blue: " + blueID)
     console.log("sends finish");
     await sleep(500);
     await mapMutex.acquire();
     io.to(lobbyID).emit("winner",color);
     mapMutex.release();
-    closeLobby(lobbyID);
+    closeLobby(redID,lobbyID);
+    closeLobby(blueID,lobbyID);
   });
   //gets list of users_id and has a callback returning 2 arrays of connected and offline users from the list given (user_id,socket_id)
   socket.on("getConnectedClients", async(list,callback) => {
+    list.sort((arg1,arg2) => arg1.score - arg2.score);
     let connected = [];
     let offline = [];
     for(let i = 0; i < list.length; i++){
-      console.log(list[i]);
       if(clients_socket.has(list[i].user_id))
         connected.push(list[i]);
       else
@@ -235,13 +254,34 @@ io.on("connection", async (socket) => {
   /*  before a player disconnects from the server:
   closing the lobby he was in and consider the other player in the lobby as the winner
   making the client offline */
-  socket.on("disconnect",() => {
-    socket.to(lobbyID).emit("winner","disconnected");
-    closeLobby(lobbyID)
-    deleteUser(userID);
+  socket.on("disconnect",async() => {
+    await sleep(15 * SEC)
+    lobbyID = clients_lobby.get(userID);
+    if(clients_socket.get(userID) == socket.id){ //hasn't reconnected!
+      if(lobbyID != undefined){
+        socket.to(lobbyID).emit("winner","disconnected");
+        closeLobby(userID,lobbyID)
+      }
+      deleteUser(userID);
+    }
   });
 
+  // invitation for a game from socket to friendID
+  socket.on("invitation",async(friendID) => {
+    console.log(` ${userID} to  ${friendID}`);
+    console.log(`${socket.id} to ${clients_socket.get(friendID)}`);
+    io.to(clients_socket.get(friendID)).emit("invitation",userID);
+  });
+  socket.on("acceptInvite",async (friendID) => {
+    console.log("lobby is: " + clients_lobby.get(friendID))
+    if(clients_lobby.get(friendID) == undefined){ //the sender is not in game already
+      lobbyID = await createLobby();
+      console.log(clients_socket.get(friendID));
+      io.to(clients_socket.get(friendID)).to(socket.id).emit("createdServerForGame",{"lobbyID": lobbyID}); // sends the server was built to both players
+    }
+  });
 });
+
 
 //gets a whole number between min and max given
 function getRandomArbitrary(min, max) {
@@ -309,11 +349,12 @@ function sleep(ms) {
 }
 
 // closes lobby number lobbyID
-async function closeLobby(lobbyID){
+async function closeLobby(user_id,lobbyID){
   console.log("delete lobby " + lobbyID);
   await mapMutex.acquire();
   io.sockets.adapter.rooms[lobbyID] = undefined;
   lobbiesMutex.delete(lobbyID);
+  clients_lobby.set(user_id,undefined); 
   io.socketsLeave(lobbyID);
   mapMutex.release();
 }
@@ -326,4 +367,15 @@ async function deleteUser(userID){
     clients_socket.delete(userID);
     clientsMutex.release();
   }
+}
+async function createLobby(){
+  const release = await mapMutex.acquire();
+  try{
+    lobbyCnt++;
+    if(lobbyCnt >= MAX_LOBBIES)
+      lobbyCnt = 1;
+    lobbyID = lobbyCnt;
+    lobbiesMutex.set(lobbyID,new Mutex());
+  }finally {(release()) }
+  return lobbyID;
 }

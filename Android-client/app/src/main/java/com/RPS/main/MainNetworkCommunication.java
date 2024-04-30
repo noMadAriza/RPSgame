@@ -98,4 +98,17 @@ public class MainNetworkCommunication {
         }).start();
         return future;
     }
+
+    public CompletableFuture<Integer> serverAvailable() {
+        CompletableFuture<Integer> res = new CompletableFuture<>();
+        socket.emit("isServerAvailable",(Ack) args -> {
+            try {
+                int num = ((JSONObject) args[0]).getInt("lobbyID");
+                res.complete(num);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+        return res;
+    }
 }

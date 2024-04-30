@@ -38,4 +38,11 @@ public class FriendsService {
         jdbcTemplate.update(sql,id,friendId);
         return true;
     }
+
+    public List<User> getFriendsRequest(String id) {
+        String sql = "select user_id from friendships where friend_id = ? AND user_id not in (select friend_id from friendships where user_id = ?)";
+        List<String> list = jdbcTemplate.queryForList(sql, String.class,id,id);
+        List<User> users = list.stream().map(userId -> userService.getUserById(userId)).collect(Collectors.toList());
+        return users;
+    }
 }

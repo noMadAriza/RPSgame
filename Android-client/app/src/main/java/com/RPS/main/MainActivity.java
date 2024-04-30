@@ -3,7 +3,7 @@ package com.RPS.main;
 import static java.lang.Thread.sleep;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.RPS.utilities.InvitationSingleton;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,16 +23,19 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayout serverList;
     MainController controller;
+    InvitationSingleton invitationSingleton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         controller = new MainController(this);
-        Button leaderboardsBtn = findViewById(R.id.leaderboardsBtn);
-        Button newLobby = findViewById(R.id.addLobbyBtn);
+        Button friendsBtn = findViewById(R.id.friends);
         serverList = findViewById(R.id.serverList);
         Button refreshBtn = findViewById(R.id.refreshBtn);
+        Button newLobby = findViewById(R.id.playBtn);
+        invitationSingleton = InvitationSingleton.getInstance();
+
 
         newLobby.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        leaderboardsBtn.setOnClickListener(view -> {
+        friendsBtn.setOnClickListener(view -> {
             runOnUiThread(() -> {
                 Intent intent = new Intent(getApplicationContext(), LeaderBoardsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -72,11 +75,19 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+        invitationSingleton.setParams(this,this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invitationSingleton.setParams(this,this);
+    }
+
     /* shows the list of all lobbies to join with the name of their creator
-        the function should get LinkedListPair which the first linkedlist is of Integers representing lobbies ID
-        the second is for linkedlist of Strings for the creator of the lobbies
-     */
+                the function should get LinkedListPair which the first linkedlist is of Integers representing lobbies ID
+                the second is for linkedlist of Strings for the creator of the lobbies
+             */
     private void showServerList(LinkedListPair pair) {
         runOnUiThread(() -> {
             serverList.removeAllViews();
